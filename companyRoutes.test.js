@@ -27,10 +27,13 @@ describe("test company routes", function () {
     let response = await request(app).get(
       "/companies?min_employees=10&max_employees=5"
     );
-    // ?????
+
+    // THIS IS ACTUALLY A TEST FOR THE MODELS (the route handles the error so system doesn't crash):
     // expect(
     //   await request(app).get("/companies?min_employees=10&max_employees=5")
     // ).toThrowError("Min employees cannot be greater than max employees duhh");
+    
+    
     expect(response.body.status).toBe(400);
     expect(response.body.message).toBe(
       "Min employees cannot be greater than max employees duhh"

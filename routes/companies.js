@@ -2,6 +2,7 @@ const express = require("express");
 const ExpressError = require("../helpers/expressError");
 const sqlForPartialUpdate = require("../helpers/partialUpdate");
 const Company = require("../models/company");
+const Job = require("../models/job");
 const jsonschema = require("jsonschema");
 const companyPostSchema = require("../schemas/companyPost.json");
 const companyPatchSchema = require("../schemas/companyPatch.json");
@@ -38,8 +39,12 @@ router.post("/", async function (req, res, next) {
 
 router.get("/:handle", async function (req, res, next) {
   try {
-    let result = await Company.get(req.params.handle);
-    return res.json({ company: result });
+    let companyResult = await Company.get(req.params.handle);
+    let jobsResult = await Job.getJobsByHandle(req.params.handle);
+    companyResult.jobs = jobsResult;
+
+    return res.json({ company: companyResult });
+
   } catch (err) {
     next(err);
   }
