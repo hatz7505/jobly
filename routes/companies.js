@@ -6,10 +6,11 @@ const Job = require("../models/job");
 const jsonschema = require("jsonschema");
 const companyPostSchema = require("../schemas/companyPost.json");
 const companyPatchSchema = require("../schemas/companyPatch.json");
+const { ensureLoggedIn, isAdmin } = require("../helpers/auth");
 
 const router = new express.Router();
 
-router.get("/", async function (req, res, next) {
+router.get("/", ensureLoggedIn, async function (req, res, next) {
   try {
     if (Object.keys(req.query).length > 0) {
       let result = await Company.getAllQueries(req.query);
@@ -22,7 +23,7 @@ router.get("/", async function (req, res, next) {
   }
 });
 
-router.post("/", async function (req, res, next) {
+router.post("/", ensureLoggedIn, isAdmin, async function (req, res, next) {
   try {
     const schemaResult = jsonschema.validate(req.body, companyPostSchema);
     if (!schemaResult.valid) {
@@ -37,20 +38,23 @@ router.post("/", async function (req, res, next) {
   }
 });
 
-router.get("/:handle", async function (req, res, next) {
+router.get("/:handle", ensureLoggedIn, async function (req, res, next) {
   try {
     let companyResult = await Company.get(req.params.handle);
     let jobsResult = await Job.getJobsByHandle(req.params.handle);
     companyResult.jobs = jobsResult;
 
     return res.json({ company: companyResult });
-
   } catch (err) {
     next(err);
   }
 });
 
-router.patch("/:handle", async function (req, res, next) {
+router.patch("/:handle", ensureLoggedIn, isAdmin, async function (
+  req,
+  res,
+  next
+) {
   try {
     const schemaResult = jsonschema.validate(req.body, companyPatchSchema);
     if (!schemaResult.valid) {
@@ -71,7 +75,11 @@ router.patch("/:handle", async function (req, res, next) {
   }
 });
 
-router.delete("/:handle", async function (req, res, next) {
+router.delete("/:handle", ensureLoggedIn, isAdmin, async function (
+  req,
+  res,
+  next
+) {
   try {
     return res.json(await Company.delete(req.params.handle));
   } catch (err) {

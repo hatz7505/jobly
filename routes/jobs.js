@@ -4,10 +4,11 @@ const Job = require("../models/job");
 const jsonschema = require("jsonschema");
 const jobPostSchema = require("../schemas/jobPost.json");
 const jobPatchSchema = require("../schemas/jobPatch.json");
+const { ensureLoggedIn, isAdmin } = require("../helpers/auth");
 
 const router = new express.Router();
 
-router.post("/", async function (req, res, next) {
+router.post("/", ensureLoggedIn, isAdmin, async function (req, res, next) {
   try {
     const schemaResult = jsonschema.validate(req.body, jobPostSchema);
     if (!schemaResult.valid) {
@@ -18,13 +19,12 @@ router.post("/", async function (req, res, next) {
     const result = await Job.create(req.body);
 
     return res.json({ job: result });
-
   } catch (err) {
     next(err);
   }
 });
 
-router.get("/", async function (req, res, next) {
+router.get("/", ensureLoggedIn, async function (req, res, next) {
   try {
     if (Object.keys(req.query).length > 0) {
       let result = await Job.getAllQueries(req.query);
@@ -37,7 +37,7 @@ router.get("/", async function (req, res, next) {
   }
 });
 
-router.get("/:id", async function (req, res, next) {
+router.get("/:id", ensureLoggedIn, async function (req, res, next) {
   try {
     let result = await Job.getById(req.params.id);
     return res.json({ job: result });
@@ -46,7 +46,7 @@ router.get("/:id", async function (req, res, next) {
   }
 });
 
-router.patch("/:id", async function (req, res, next) {
+router.patch("/:id", ensureLoggedIn, isAdmin, async function (req, res, next) {
   try {
     const schemaResult = jsonschema.validate(req.body, jobPatchSchema);
     if (!schemaResult.valid) {
@@ -61,7 +61,7 @@ router.patch("/:id", async function (req, res, next) {
   }
 });
 
-router.delete("/:id", async function (req, res, next) {
+router.delete("/:id", ensureLoggedIn, isAdmin, async function (req, res, next) {
   try {
     let result = await Job.delete(req.params.id);
     return res.json(result);
@@ -70,5 +70,4 @@ router.delete("/:id", async function (req, res, next) {
   }
 });
 
-
-module.exports = router
+module.exports = router;

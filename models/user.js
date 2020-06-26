@@ -25,7 +25,8 @@ class User {
         last_name,
         email,
         photo_url,
-        is_admin,
+        // !! forces into boolean value
+        !!is_admin,
       ]
     );
     return result.rows[0];
@@ -43,7 +44,7 @@ class User {
 
   static async getByUsername(username) {
     let result = await db.query(
-      `SELECT username, first_name, last_name, email, photo_url, is_admin FROM users
+      `SELECT username, first_name, last_name, email, photo_url, password, is_admin FROM users
       WHERE username=$1`,
       [username]
     );
