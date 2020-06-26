@@ -47,6 +47,7 @@ class Company {
     let returnObj = { messge: "Company deleted" };
     return returnObj;
   }
+  
   static async getAllQueries(queries) {
     if (+queries.min_employees > +queries.max_employees) {
       throw new ExpressError(
