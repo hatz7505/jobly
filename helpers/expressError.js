@@ -2,8 +2,10 @@
  *  add a status when we make an instance of it.
  *
  *  Since we are using JSONSchema and will return an array of
- *  errors we want to make sure we display that properly
- *  The error-handling middleware will return this.
+ *  errors, we want to make sure we display that properly
+ * 
+ *  The error-handling middleware will return this in the instance
+ * of an error.
  */
 
 class ExpressError extends Error {
@@ -11,7 +13,7 @@ class ExpressError extends Error {
     super();
     this.message = message;
     this.status = status;
-    if (process.env.NODE_ENV !== 'test') {
+    if (process.env.NODE_ENV !== "test") {
       console.error(this.stack);
     }
   }

@@ -11,14 +11,14 @@ describe("partialUpdate()", () => {
   it("should generate a proper partial update query with just 1 field", async function () {
     let { query, values } = sqlForPartialUpdate(
       "companies",
-      { description: "bomb vegan eatszzz" },
+      { description: "da best vegan food!" },
       "handle",
       "harryb"
     );
     let result = await db.query(query, values);
 
     expect(result.rows.length).toBe(1);
-    expect(result.rows[0].description).toBe("bomb vegan eatszzz");
+    expect(result.rows[0].description).toBe("da best vegan food!");
   });
 });
 

@@ -25,7 +25,6 @@ class User {
         last_name,
         email,
         photo_url,
-        // !! forces into boolean value
         !!is_admin,
       ]
     );

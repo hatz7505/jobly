@@ -1,24 +1,24 @@
 const express = require("express");
 const ExpressError = require("../helpers/expressError");
 const User = require("../models/user");
-const jwt = require('jsonwebtoken');
-const { SECRET_KEY } = require('../config');
-const { ensureLoggedIn, isSameUser } = require("../helpers/auth")
+const jwt = require("jsonwebtoken");
+const { SECRET_KEY } = require("../config");
+const { ensureLoggedIn, isSameUser } = require("../helpers/auth");
 
 const router = new express.Router();
 
-router.post('/', async function(req, res, next) {
+router.post("/", async function (req, res, next) {
   try {
     const result = await User.create(req.body);
     result.token = jwt.sign(
-      { username: result.username, is_admin: result.is_admin},
+      { username: result.username, is_admin: result.is_admin },
       SECRET_KEY
     );
     return res.json({ user: result });
   } catch (err) {
     next(err);
   }
-})
+});
 
 router.get("/", async function (req, res, next) {
   try {
@@ -38,7 +38,11 @@ router.get("/:username", async function (req, res, next) {
   }
 });
 
-router.patch("/:username", ensureLoggedIn, isSameUser, async function (req, res, next) {
+router.patch("/:username", ensureLoggedIn, isSameUser, async function (
+  req,
+  res,
+  next
+) {
   try {
     let result = await User.update(req.body, req.params.username);
     return res.json({ user: result });
@@ -47,14 +51,17 @@ router.patch("/:username", ensureLoggedIn, isSameUser, async function (req, res,
   }
 });
 
-router.delete("/:username", ensureLoggedIn, isSameUser, async function (req, res, next) {
+router.delete("/:username", ensureLoggedIn, isSameUser, async function (
+  req,
+  res,
+  next
+) {
   try {
     let result = await User.delete(req.params.username);
-    return res.json(result)
-  } catch(err) {
+    return res.json(result);
+  } catch (err) {
     next(err);
   }
-})
-
+});
 
 module.exports = router;
