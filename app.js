@@ -34,8 +34,10 @@ app.post("/login", async function (req, res, next) {
         return res.json({ token });
       }
     }
+    // throw error if login credentials are not valid
     throw new ExpressError("Invalid user/password", 400);
   } catch (err) {
+    // next the error to error handling middleware
     next(err);
   }
 });
@@ -52,8 +54,10 @@ app.use(function (req, res, next) {
 /** general error handler */
 
 app.use(function (err, req, res, next) {
+  // set error status to 500 if not on the error body
   res.status(err.status || 500);
 
+  // return error status and error message
   return res.json({
     status: err.status,
     message: err.message,
